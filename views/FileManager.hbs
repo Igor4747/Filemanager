@@ -1,0 +1,119 @@
+<div class="sidenav">
+    <a id="NewFolder">Nowy Folder</a>
+    <a id="NewFile">Nowy Plik Tekstowy</a>
+    <a id="ChangeFolderName">Zmień nazwę Folderu</a>
+    <form enctype="multipart/form-data" method="POST" action="/handleUpload">
+        <input class="upload" type="file" multiple required name="upload">
+        <br>
+        <button class="button" type="submit">Upload</button>
+    </form>
+</div>
+
+<div id="MAIN">
+    <dialog id="file">
+        <p class="title2">
+            Podaj nazwę pliku
+        </p>
+        <form action="/handleFile" method="GET">
+            <input id="fileName" name="upload">
+            <button class="button" type="submit">Ok</button>
+        </form>
+        <button class="button" id="cancelFile">Cancel</button>
+    </dialog>
+    <dialog id="folder">
+        <p class="title2">
+            Podaj nazwę folderu
+        </p>
+        <form action="/handleFolder" method="GET">
+            <input id="folderName" name="upload2">
+            <button class="button" type="submit">Ok</button>
+        </form>
+        <button class="button" id="cancelFolder">Cancel</button>
+    </dialog>
+    <dialog id="newFolderName">
+        <p class="title2">
+            Podaj nową nazwę folderu
+        </p>
+        <form action="/changeRootName" method="GET">
+            <input id="newFolderName" name="upload3">
+            <button class="button" type="submit">Ok</button>
+        </form>
+        <button class="button" id="cancelFolderName">Cancel</button>
+    </dialog>
+
+    <div class="filemanager">
+        {{#each path}}
+        <form action="/pathNav" method="GET" class="path">
+            <input type="hidden" name="path" value="{{this.link}}" />
+            <button type="submit" class="button4">
+                <p class="mainTitle">
+                    <b>
+                        / {{this.name}}
+                    </b>
+                </p>
+            </button>
+        </form>
+        {{/each}}<div class="breakLine"></div>
+        <p class="title">Folders</p>
+        {{#each foldersTab}}
+        <div class="dir">
+            <form action="/changeFolder" method="GET">
+                <input type="hidden" name="root" value="{{this.dir}}" />
+                <button type="submit" class="button3">
+                    <img src="/gfx/og.png" alt="dir" class="icon">
+                    <br>{{this.dir}}
+                </button>
+            </form>
+            <form action="/deleteFolder" method="GET">
+                <button class="button2" type="submit" name="id" value="{{this.id}}">Delete</button>
+            </form>
+        </div>
+        {{/each}}
+        <br><br><br><br><br><br><br>
+        <p class="title">Files</p>
+        {{#each filesTab}}
+        <div class="file">
+            <form action="openFile" method="GET">
+                <input type="hidden" name="file" value="{{this.plik}}">
+                <button type="submit" class="button3">
+                    <img src="/gfx/txt.png" alt="dir" class="icon">
+                    <br>{{this.plik}}
+                </button>
+            </form>
+            <form action="/deleteFile" method="GET">
+                <button class="button2" type="submit" name="id" value="{{this.id}}">Delete</button>
+            </form>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+
+
+
+<script>
+    document.getElementById("NewFile").addEventListener("click", function () {
+        let x = document.getElementById("file")
+        x.open = true
+    })
+    document.getElementById("cancelFile").addEventListener("click", function () {
+        let x = document.getElementById("file")
+        x.open = false
+    })
+    document.getElementById("NewFolder").addEventListener("click", function () {
+        let x = document.getElementById("folder")
+        x.open = true
+    })
+    document.getElementById("cancelFolder").addEventListener("click", function () {
+        let x = document.getElementById("folder")
+        x.open = false
+    })
+    document.getElementById("ChangeFolderName").addEventListener("click", function () {
+        let x = document.getElementById("newFolderName")
+        x.open = true
+    })
+    document.getElementById("cancelFolderName").addEventListener("click", function () {
+        let x = document.getElementById("newFolderName")
+        x.open = false
+    })
+</script>

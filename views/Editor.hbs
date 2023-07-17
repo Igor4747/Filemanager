@@ -1,0 +1,152 @@
+<head>
+    <link rel="stylesheet" href="/css/colors.css">
+</head>
+<div class="sidenav">
+
+    <a id="changeName">Zmień nazwę pliku</a>
+    <a id="colors">Kolory</a>
+    <a id="font-size+">Font +</a>
+    <a id="font-size-">Font -</a>
+    <a id="saveSettings">Zapisz ustawienia</a>
+    <form action="/saveFile" method="GET">
+        <input type="hidden" name="text" id="value">
+        <input type="hidden" name="file" value="{{file}}">
+        <div class="text">
+            <button class="button6" type="submit">
+                Zapisz zmiany<br> w pliku
+            </button>
+        </div>
+    </form>
+</div>
+
+<dialog id="changeNameDialog">
+    <form action="/changeFileName" method="GET">
+        <p class="title2">
+            Podaj nową nazwę pliku {{file}}
+        </p>
+        <input name="newName">
+        <input type="hidden" name="oldName" value="{{file}}">
+        <input type="hidden" name="text" id="value2">
+        <button class="button" type="submit">
+            <a id="ChangeName">Ok</a>
+        </button>
+    </form>
+    <button class="button" id="cancelChangeName">
+        Cancel
+    </button>
+</dialog>
+
+<div class="filemanager">
+    <p class="title3"><b>{{file}}</b></p>
+    <textarea id="numbers">
+
+    </textarea>
+    <textarea id="textarea">
+{{text}}
+    </textarea>
+</div>
+<script>
+    window.onload = function () {
+
+        const client = io();
+
+        let font
+        let value = document.getElementById("value")
+        let value2 = document.getElementById("value2")
+        let area = document.getElementById("textarea")
+        let numbers = document.getElementById("numbers")
+        let colors = document.getElementById("colors")
+        let ustawienia = document.getElementById("saveSettings")
+        let className
+        let width = 3
+        let choose = 0
+        client.on("settings", (data) => {
+            font = data.font;
+            area.className = data.className;
+            numbers.className = data.className;
+            className = data.className
+            area.style.fontSize = font + "px"
+            numbers.style.fontSize = font + "px"
+            console.log(font, data.className)
+            width = font / 4
+            numbers.style.width = width + "%"
+        })
+        value.value = area.value
+        value2.value = area.value
+        document.getElementById("changeName").addEventListener("click", function () {
+            document.getElementById("changeNameDialog").show()
+        })
+        document.getElementById("cancelChangeName").addEventListener("click", function () {
+            document.getElementById("changeNameDialog").close()
+        })
+        document.getElementById("font-size+").addEventListener("click", function () {
+            font += 2.5
+            area.style.fontSize = font + "px"
+            numbers.style.fontSize = font + "px"
+            console.log(area.style.fontSize)
+            if (font % 10 == 0) {
+                width += 2
+                numbers.style.width = width + "%"
+            }
+        })
+        colors.addEventListener("click", function () {
+            choose++
+            switch (choose) {
+                case 1:
+                    area.className = "light";
+                    numbers.className = "light"
+                    className = "light"
+                    break;
+                case 2:
+                    area.className = "dark";
+                    numbers.className = "dark";
+                    className = "dark";
+                    break;
+                case 3:
+                    area.className = "darkPro";
+                    numbers.className = "darkPro";
+                    className = "darkPro";
+                    break;
+            }
+            if (choose == 3) {
+                choose = 0
+            }
+            console.log(choose)
+            console.log(area.className)
+        })
+        document.getElementById("font-size-").addEventListener("click", function () {
+            font -= 2.5
+            numbers.style.fontSize = font + "px"
+            area.style.fontSize = font + "px"
+            if (font % 10 == 0) {
+                width -= 2
+                numbers.style.width = width + "%"
+            }
+        })
+        ustawienia.addEventListener("click", function () {
+            client.emit("saveSettings", {
+                font: font,
+                className: className
+            })
+        })
+        let x = area.value.split("\n")
+        let number = 0
+        let text = ""
+        x.forEach(element => {
+            number++
+            text += number + " " + "\n"
+        })
+        numbers.value = text
+        area.onkeyup = function () {
+            value.value = area.value
+            let x = area.value.split("\n")
+            let number = 0
+            let text = ""
+            x.forEach(element => {
+                number++
+                text += number + " " + "\n"
+            })
+            numbers.value = text
+        }
+    }
+</script>
